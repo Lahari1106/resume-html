@@ -4,137 +4,91 @@
   <style>
     body {
       margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f0f4f8;
-      color: #222;
+      font-family: Arial, sans-serif;
+      background-color: #e0f7fa;
     }
 
     .resume-container {
-      width: 80%;
       max-width: 850px;
       margin: 50px auto;
-      background-color: #ffffff;
-      padding: 40px 50px;
-      border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-      position: relative;
+      background-color: white;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+      display: flex;
+      border-radius: 10px;
+      overflow: hidden;
     }
 
-    h1 {
-      text-align: center;
-      font-size: 30px;
-      font-weight: 700;
-      color: #00796b;
-      margin-bottom: 25px;
-      letter-spacing: 1px;
+    .left-column {
+      width: 35%;
+      background-color: #00796b;
+      color: white;
+      padding: 30px 20px;
     }
 
-    .personal-info {
-      position: absolute;
-      top: 30px;
-      right: 50px;
-      text-align: right;
-      font-size: 14px;
-      line-height: 1.6;
-      color: #555;
+    .right-column {
+      width: 65%;
+      padding: 30px 25px;
     }
 
     .section-title {
+      font-size: 18px;
       font-weight: bold;
-      font-size: 20px;
-      margin-top: 35px;
-      color: #004d40;
-      border-bottom: 2px solid #00897b;
+      margin-top: 20px;
+      border-bottom: 2px solid #ccc;
       padding-bottom: 5px;
     }
 
-    .section-content {
-      margin-top: 12px;
-      font-size: 15.5px;
-      line-height: 1.7;
+    h1 {
+      margin-top: 0;
     }
 
     ul {
+      margin: 0;
       padding-left: 20px;
     }
 
-    ul li {
-      margin-bottom: 10px;
-    }
-
-    strong {
-      color: #00695c;
-    }
-
-    .section-content p:hover,
-    ul li:hover {
-      background-color: #e0f2f1;
-      border-radius: 6px;
-      padding: 5px;
-      transition: background-color 0.3s ease;
+    p, li {
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
 
   <div class="resume-container">
-    <h1>RESUME</h1>
-
-    <!-- Personal Info -->
-    <div class="personal-info">
-      <p><strong>Name:</strong> ALLA LAHARI</p>
-      <p><strong>Email:</strong> laharialla6@gmail.com</p>
-      <p><strong>Location:</strong> Hyderabad, Telangana, 500043</p>
-      <p><strong>Contact:</strong> 97XXXXXXX9</p>
+    
+    <!-- Left Column -->
+    <div class="left-column">
+      <h1>Lahari</h1>
+      <p><strong>2nd Year CSE Student</strong></p>
+      <p>Email: laharialla6@gmail.com</p>
+      <p>Phone: +91 9704825329</p>
+      <p>Location: Hyderabad, India</p>
     </div>
 
-    <!-- Objective -->
-    <div class="section-title">OBJECTIVE</div>
-    <div class="section-content">
-      <p>To leverage my strong foundation in programming and web technologies to contribute to impactful software projects, while continuously learning and growing as a developer in collaborative, fast-paced environments.</p>
-    </div>
+    <!-- Right Column -->
+    <div class="right-column">
+      
+      <div class="section-title">Education</div>
+      <p><strong>B.Tech in Computer Science</strong><br>
+      KL University, 2024–2028</p>
 
-    <!-- Academic Qualification -->
-    <div class="section-title">ACADEMIC QUALIFICATION</div>
-    <div class="section-content">
+      <div class="section-title">Skills</div>
       <ul>
-        <li>
-          <strong>Bachelor of Technology (B.Tech) in Computer Science and Engineering</strong><br>
-          K L University, Bachupally<br>
-          2024 – Present<br>
-          Current CGPA: 9.8
-        </li>
-        <li>
-          <strong>Intermediate (MPC)</strong><br>
-          Narayana Junior College, Hyderabad
-        </li>
-        <li>
-          <strong>SSC (10th Class)</strong><br>
-          Sri Chaitanya School, Chintal
-        </li>
+        <li>C, Python, Java basics</li>
+        <li>HTML, CSS, Git</li>
+        <li>Data Structures, IoT basics</li>
       </ul>
-    </div>
 
-    <!-- Achievements -->
-    <div class="section-title">ACHIEVEMENTS</div>
-    <div class="section-content">
-      <ul>
-        <li>Built a <strong>Personalized Safety Alert System</strong> using Arduino with sensors and buzzer for real-time safety monitoring</li>
-        <li>Completed a <strong>7-Day Social Internship</strong> in Waste Management, contributing to awareness drives and field activities</li>
-        <li>Developed mini websites as part of academic projects</li>
-      </ul>
-    </div>
+      <div class="section-title">Projects</div>
+      <p><strong>Personalized Safety Alert System</strong><br>
+      Built using Arduino for real-time safety alerts using sensors and buzzer.</p>
 
-    <!-- Programming Languages -->
-    <div class="section-title">PROGRAMMING LANGUAGES</div>
-    <div class="section-content">
+      <div class="section-title">Achievements</div>
       <ul>
-        <li>C</li>
-        <li>Python</li>
-        <li>Java (Basics)</li>
-        <li>HTML & CSS</li>
-        <li>Git</li>
+        <li>Completed a 7-day Social Internship in Waste Management</li>
+        <li>Built websites and academic projects for university assignments</li>
       </ul>
+
     </div>
 
   </div>
