@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LMS Theme Switcher</title>
+  <style>
+    :root {
+      --bg: #fff;
+      --text: #000;
+      --transition: 0.3s;
+    }
+    [data-theme="dark"] {
+      --bg: #111;
+      --text: #eee;
+    }
+    [data-theme="sepia"] {
+      --bg: #f4ecd8;
+      --text: #3b2f2b;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      transition: background var(--transition), color var(--transition);
+      font-family: sans-serif;
+      padding: 20px;
+    }
+    button { margin: 5px; padding: 8px 12px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>LMS Theme Switcher</h1>
+  <button onclick="setTheme('light')">Light</button>
+  <button onclick="setTheme('dark')">Dark</button>
+  <button onclick="setTheme('sepia')">Sepia</button>
+  <button onclick="resetTheme()">System</button>
+
+  <script>
+    const key = "lms-theme";
+
+    function setTheme(theme) {
+      document.documentElement.setAttribute("data-theme", theme);
+      localStorage.setItem(key, theme);
+    }
+
+    function resetTheme() {
+      document.documentElement.removeAttribute("data-theme");
+      localStorage.removeItem(key);
+    }
+
+    // Load saved theme
+    const saved = localStorage.getItem(key);
+    if (saved) setTheme(saved);
+  </script>
+</body>
+</html>

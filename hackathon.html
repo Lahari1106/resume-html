@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>CFO Helper</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+    .slider-box { margin: 20px; }
+    .usage { margin-top: 20px; font-weight: bold; }
+    button { padding: 10px 20px; margin: 10px; }
+  </style>
+</head>
+<body>
+  <h1>💰 CFO Helper</h1>
+
+  <div class="slider-box">
+    <label>Hiring (engineers): </label>
+    <input type="range" id="hiring" min="0" max="10" value="2" />
+    <span id="hiringVal">2</span>
+  </div>
+
+  <div class="slider-box">
+    <label>Marketing Spend (₹): </label>
+    <input type="range" id="marketing" min="0" max="50000" step="1000" value="10000" />
+    <span id="marketingVal">10000</span>
+  </div>
+
+  <div class="slider-box">
+    <label>Product Price Increase (%): </label>
+    <input type="range" id="price" min="0" max="50" value="10" />
+    <span id="priceVal">10</span>
+  </div>
+
+  <button onclick="simulate()">Simulate</button>
+  <button onclick="exportReport()">Export Report</button>
+
+  <canvas id="chart" width="400" height="200"></canvas>
+
+  <div class="usage">
+    Scenarios tested: <span id="scenarios">0</span> | Reports exported: <span id="reports">0</span>
+  </div>
+
+  <script>
+    let scenarios = 0, reports = 0;
+
+    const ctx = document.getElementById('chart').getContext('2d');
+    let chart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Revenue', 'Expenses'],
+        datasets: [{
+          label: 'Forecast',
+          data: [0, 0],
+          backgroundColor: ['green', 'red']
+        }]
+      }
+    });
+
+    function simulate() {
+      let hiring = parseInt(document.getElementById('hiring').value);
+      let marketing = parseInt(document.getElementById('marketing').value);
+      let price = parseInt(document.getElementById('price').value);
+
+      document.getElementById('hiringVal').innerText = hiring;
+      document.getElementById('marketingVal').innerText = marketing;
+      document.getElementById('priceVal').innerText = price;
+
+      let revenue = 50000 + (price * 500); 
+      let expenses = (hiring * 10000) + marketing;
+
+      chart.data.datasets[0].data = [revenue, expenses];
+      chart.update();
+
+      scenarios++;
+      document.getElementById('scenarios').innerText = scenarios;
+    }
+
+    function exportReport() {
+      reports++;
+      document.getElementById('reports').innerText = reports;
+      alert("Report generated successfully!");
+    }
+  </script>
+</body>
+</html>

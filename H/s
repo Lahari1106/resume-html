@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CFO Helper Agent</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #4f46e5;
+            --accent: #ec4899;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --gray: #64748b;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+        
+        @media (max-width: 900px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .panel {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .panel-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .panel-title i {
+            background: var(--primary);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .control-group {
+            margin-bottom: 25px;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 10px;
+        }
+        
+        .control-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .slider-container {
+            margin-bottom: 10px;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            height: 10px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: #cbd5e1;
+            outline: none;
+            border-radius: 5px;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .value-display {
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 14px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: #e2e8f0;
+            color: var(--dark);
+        }
+        
+        .btn-secondary:hover {
+            background: #cbd5e1;
+            transform: translateY(-2px);
+        }
+        
+        .metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .metric-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .metric-label {
+            font-size: 1rem;
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        
+        .chart-container {
+            height: 300px;
+            margin-top: 20px;
+        }
+        
+        .usage-counter {
+            background: #f1f5f9;
+            padding: 12px 20px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+            font-weight: 600;
+        }
+        
+        .negative {
+            color: var(--danger);
+        }
+        
+        .positive {
+            color: var(--success);
+        }
+        
+        .billing-info {
+            margin-top: 25px;
+            padding: 20px;
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border-radius: 12px;
+            border-left: 5px solid var(--warning);
+        }
+        
+        .billing-info h3 {
+            color: var(--warning);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .scenario-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .scenario-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: var(--gray);
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-calculator"></i> CFO Helper Agent</h1>
+            <p class="subtitle">Simulate budget scenarios and make informed financial decisions with real-time forecasting</p>
+        </header>
+        
+        <div class="dashboard">
+            <div class="panel">
+                <h2 class="panel-title"><i class="fas fa-sliders-h"></i> Financial Controls</h2>
+                
+                <div class="control-group">
+                    <div class="control-label">
+                        <span><i class="fas fa-user-plus"></i> Hiring (Additional Engineers)</span>
+                        <span class="value-display" id="hiring-value">0</span>
+                    </div>
+                    <div class="slider-container">
+                        <input type="range" id="hiring-slider" min="0" max="10" value="0" step="1">
+                    </div>
+                    <div class="control-details">
+                        <small>Each engineer costs $8,000/month + $5,000 onboarding</small>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <div class="control-label">
+                        <span><i class="fas fa-bullhorn"></i> Marketing Budget ($)</span>
+                        <span class="value-display" id="marketing-value">$0</span>
+                    </div>
+                    <div class="slider-container">
+                        <input type="range" id="marketing-slider" min="0" max="50000" value="0" step="1000">
+                    </div>
+                    <div class="control-details">
+                        <small>Expected ROI: 15% increase in customers per $10,000</small>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <div class="control-label">
+                        <span><i class="fas fa-tag"></i> Product Price Increase (%)</span>
+                        <span class="value-display" id="pricing-value">0%</span>
+                    </div>
+                    <div class="slider-container">
+                        <input type="range" id="pricing-slider" min="-10" max="30" value="0" step="1">
+                    </div>
+                    <div class="control-details">
+                        <small>Current price: $100/product | 500 customers</small>
+                    </div>
+                </div>
+                
+                <div class="button-group">
+                    <button class="btn-primary" id="simulate-btn">
+                        <i class="fas fa-play-circle"></i> Simulate Scenario
+                    </button>
+                    <button class="btn-secondary" id="reset-btn">
+                        <i class="fas fa-redo"></i> Reset Values
+                    </button>
+                </div>
+                
+                <div class="billing-info">
+                    <h3><i class="fas fa-receipt"></i> Flexprice Billing</h3>
+                    <p>Each simulation: <strong>$0.10</strong></p>
+                    <p>Report export: <strong>$0.25</strong></p>
+                    <p id="billing-details">Current session: <span id="simulation-count">0</span> simulations ($0.00)</p>
+                </div>
+            </div>
+            
+            <div class="panel">
+                <h2 class="panel-title"><i class="fas fa-chart-line"></i> Financial Forecast</h2>
+                
+                <div class="metrics">
+                    <div class="metric-card">
+                        <div class="metric-label"><i class="fas fa-calendar-alt"></i> Runway</div>
+                        <div class="metric-value" id="runway-value">12.0 months</div>
+                        <div class="metric-change" id="runway-change">No change</div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="metric-label"><i class="fas fa-dollar-sign"></i> Monthly Profit</div>
+                        <div class="metric-value" id="profit-value">$15,000</div>
+                        <div class="metric-change" id="profit-change">No change</div>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="finance-chart"></canvas>
+                </div>
+                
+                <div class="scenario-card">
+                    <div class="scenario-header">
+                        <h3><i class="fas fa-lightbulb"></i> Scenario Insight</h3>
+                        <i class="fas fa-info-circle" style="color: var(--primary);"></i>
+                    </div>
+                    <p id="scenario-insight">Adjust the sliders to see how your decisions impact financial metrics.</p>
+                </div>
+                
+                <div class="button-group">
+                    <button class="btn-primary" id="export-btn">
+                        <i class="fas fa-file-export"></i> Export Report
+                    </button>
+                </div>
+                
+                <div class="usage-counter">
+                    <i class="fas fa-chart-pie"></i>
+                    Scenarios tested: <span id="usage-counter">0</span>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>CFO Helper Agent | Powered by Pathway Data Integration | Flexprice Billing</p>
+        </footer>
+    </div>
+
+    <script>
+        // Initial financial data
+        const initialData = {
+            runway: 12.0, // months
+            monthlyProfit: 15000, // dollars
+            monthlyRevenue: 50000,
+            monthlyExpenses: 35000,
+            cashBalance: 180000,
+            currentPrice: 100,
+            currentUsers: 500,
+            engineers: 5,
+            marketing: 10000
+        };
+        
+        let currentData = {...initialData};
+        let simulationCount = 0;
+        let chart = null;
+        
+        // DOM Elements
+        const hiringSlider = document.getElementById('hiring-slider');
+        const marketingSlider = document.getElementById('marketing-slider');
+        const pricingSlider = document.getElementById('pricing-slider');
+        const hiringValue = document.getElementById('hiring-value');
+        const marketingValue = document.getElementById('marketing-value');
+        const pricingValue = document.getElementById('pricing-value');
+        const simulateBtn = document.getElementById('simulate-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const exportBtn = document.getElementById('export-btn');
+        const runwayValue = document.getElementById('runway-value');
+        const profitValue = document.getElementById('profit-value');
+        const runwayChange = document.getElementById('runway-change');
+        const profitChange = document.getElementById('profit-change');
+        const usageCounter = document.getElementById('usage-counter');
+        const simulationCountElement = document.getElementById('simulation-count');
+        const billingDetails = document.getElementById('billing-details');
+        const scenarioInsight = document.getElementById('scenario-insight');
+        
+        // Initialize sliders
+        hiringSlider.addEventListener('input', () => {
+            hiringValue.textContent = hiringSlider.value;
+        });
+        
+        marketingSlider.addEventListener('input', () => {
+            marketingValue.textContent = '$' + parseInt(marketingSlider.value).toLocaleString();
+        });
+        
+        pricingSlider.addEventListener('input', () => {
+            const value = parseInt(pricingSlider.value);
+            pricingValue.textContent = value > 0 ? +${value}% : ${value}%;
+        });
+        
+        // Initialize chart
+        function initChart() {
+            const ctx = document.getElementById('finance-chart').getContext('2d');
+            chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Revenue', 'Expenses', 'Profit'],
+                    datasets: [{
+                        label: 'Current ($)',
+                        data: [initialData.monthlyRevenue, initialData.monthlyExpenses, initialData.monthlyProfit],
+                        backgroundColor: [
+                            'rgba(54, 162, 235, 0.7)',
+                            'rgba(255, 99, 132, 0.7)',
+                            'rgba(75, 192, 192, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(75, 192, 192, 1)'
+                        ],
+                        borderWidth: 1,
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Simulate scenario
+        simulateBtn.addEventListener('click', () => {
+            // Get slider values
+            const additionalEngineers = parseInt(hiringSlider.value);
+            const additionalMarketing = parseInt(marketingSlider.value);
+            const priceIncrease = parseInt(pricingSlider.value) / 100;
+            
+            // Calculate impacts
+            const engineerCost = additionalEngineers * 8000;
+            const onboardingCost = additionalEngineers * 5000;
+            const newMarketing = initialData.marketing + additionalMarketing;
+            
+            // Price change impact (simplified)
+            let revenueChange = 0;
+            let userChange = 0;
+            
+            if (priceIncrease !== 0) {
+                // Assume some price elasticity
+                userChange = -Math.abs(priceIncrease) * 8 * initialData.currentUsers;
+                revenueChange = (initialData.currentPrice * (1 + priceIncrease)) * 
+                                (initialData.currentUsers + userChange) - 
+                                initialData.monthlyRevenue;
+            }
+            
+            // Marketing impact (simplified)
+            const marketingImpact = additionalMarketing * 0.15 * initialData.currentPrice;
+            
+            // Calculate new values
+            const newExpenses = initialData.monthlyExpenses + engineerCost + (additionalMarketing / 12);
+            const newRevenue = initialData.monthlyRevenue + revenueChange + marketingImpact;
+            const newProfit = newRevenue - newExpenses;
+            
+            // Calculate new runway
+            const monthlyBurn = newExpenses - newRevenue;
+            const newRunway = monthlyBurn > 0 ? currentData.cashBalance / monthlyBurn : 24;
+            
+            // Update current data
+            currentData.monthlyExpenses = newExpenses;
+            currentData.monthlyRevenue = newRevenue;
+            currentData.monthlyProfit = newProfit;
+            currentData.runway = newRunway;
+            
+            // Generate scenario insight
+            generateScenarioInsight(additionalEngineers, additionalMarketing, priceIncrease, userChange);
+            
+            // Update UI
+            updateResults();
+            
+            // Increment simulation count
+            simulationCount++;
+            usageCounter.textContent = simulationCount;
+            simulationCountElement.textContent = simulationCount;
+            
+            // Update billing info
+            const simulationCost = simulationCount * 0.1;
+            billingDetails.textContent = Current session: ${simulationCount} simulations ($${simulationCost.toFixed(2)});
+        });
+        
+        // Generate scenario insight
+        function generateScenarioInsight(engineers, marketing, priceChange, userChange) {
+            let insight = "";
+            
+            if (engineers === 0 && marketing === 0 && priceChange === 0) {
+                insight = "This scenario matches your current setup. Adjust sliders to see changes.";
+            } else {
+                if (engineers > 0) {
+                    insight += `Adding ${engineers} engineers increases monthly costs by $${(engineers * 8000).toLocaleString()}. `;
+                }
+                
+                if (marketing > 0) {
+                    insight += `$${marketing.toLocaleString()} in marketing may generate ~${Math.round(marketing * 0.15)} new customers. `;
+                }
+                
+                if (priceChange > 0) {
+                    insight += `A ${Math.round(priceChange * 100)}% price increase may reduce customers by ~${Math.abs(Math.round(userChange))} but increase revenue. `;
+                } else if (priceChange < 0) {
+                    insight += `A ${Math.abs(Math.round(priceChange * 100))}% price decrease may attract ~${Math.abs(Math.round(userChange))} more customers. `;
+                }
+                
+                if (currentData.monthlyProfit > initialData.monthlyProfit) {
+                    insight += "This scenario improves profitability.";
+                } else {
+                    insight += "This scenario reduces short-term profitability.";
+                }
+            }
+            
+            scenarioInsight.textContent = insight;
+        }
+        
+        // Reset values
+        resetBtn.addEventListener('click', () => {
+            hiringSlider.value = 0;
+            marketingSlider.value = 0;
+            pricingSlider.value = 0;
+            
+            hiringValue.textContent = '0';
+            marketingValue.textContent = '$0';
+            pricingValue.textContent = '0%';
+            
+            currentData = {...initialData};
+            scenarioInsight.textContent = "Adjust the sliders to see how your decisions impact financial metrics.";
+            updateResults();
+        });
+        
+        // Export report
+        exportBtn.addEventListener('click', () => {
+            alert('Report exported successfully!\n\nThis action would cost $0.25 with Flexprice billing.');
+        });
+        
+        // Update results display
+        function updateResults() {
+            // Update metric values
+            runwayValue.textContent = currentData.runway.toFixed(1) + ' months';
+            profitValue.textContent = '$' + Math.round(currentData.monthlyProfit).toLocaleString();
+            
+            // Calculate changes
+            const runwayDiff = currentData.runway - initialData.runway;
+            const profitDiff = currentData.monthlyProfit - initialData.monthlyProfit;
+            
+            // Update change indicators
+            if (runwayDiff > 0) {
+                runwayChange.textContent = +${runwayDiff.toFixed(1)} months;
+                runwayChange.className = 'metric-change positive';
+            } else if (runwayDiff < 0) {
+                runwayChange.textContent = ${runwayDiff.toFixed(1)} months;
+                runwayChange.className = 'metric-change negative';
+            } else {
+                runwayChange.textContent = 'No change';
+                runwayChange.className = 'metric-change';
+            }
+            
+            if (profitDiff > 0) {
+                profitChange.textContent = +$${Math.abs(profitDiff).toLocaleString()};
+                profitChange.className = 'metric-change positive';
+            } else if (profitDiff < 0) {
+                profitChange.textContent = -$${Math.abs(profitDiff).toLocaleString()};
+                profitChange.className = 'metric-change negative';
+            } else {
+                profitChange.textContent = 'No change';
+                profitChange.className = 'metric-change';
+            }
+            
+            // Update chart
+            chart.data.datasets[0].data = [
+                currentData.monthlyRevenue,
+                currentData.monthlyExpenses,
+                currentData.monthlyProfit
+            ];
+            chart.update();
+        }
+        
+        // Initialize the application
+        window.onload = function() {
+            initChart();
+            updateResults();
+        };
+    </script>
+</body>
+</html>

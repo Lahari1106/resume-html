@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LMS Theme Switcher</title>
+  <style>
+    :root {
+      --bg: #fff; --text: #000; --sidebar: #f0f0f0; --transition: 0.3s;
+    }
+    [data-theme="dark"] {
+      --bg: #1e1e1e; --text: #eee; --sidebar: #2a2a2a;
+    }
+    [data-theme="sepia"] {
+      --bg: #f4ecd8; --text: #3b2f2b; --sidebar: #e0d6c2;
+    }
+    body {
+      margin: 0; display: flex; height: 100vh;
+      background: var(--bg); color: var(--text);
+      font-family: sans-serif; transition: background var(--transition), color var(--transition);
+    }
+    .sidebar {
+      width: 200px; padding: 10px; background: var(--sidebar); transition: background var(--transition);
+    }
+    .content {
+      flex: 1; padding: 20px;
+    }
+    button { margin: 5px; padding: 6px 10px; cursor: pointer; border: 1px solid #aaa; }
+    button.active { background: #007bff; color: #fff; border-color: #0056b3; }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h3>Courses</h3>
+    <ul>
+      <li>HTML Basics</li>
+      <li>CSS Essentials</li>
+      <li>JavaScript Intro</li>
+    </ul>
+    <h4>Themes</h4>
+    <button data-theme="light">Light</button>
+    <button data-theme="dark">Dark</button>
+    <button data-theme="sepia">Sepia</button>
+    <button data-theme="system">System</button>
+  </div>
+  <div class="content">
+    <h1>Welcome to the LMS</h1>
+    <p>Select a course from the sidebar to start learning.</p>
+  </div>
+
+  <script>
+    const key = "lms-theme", buttons = document.querySelectorAll("button");
+
+    function applyTheme(theme, save = true) {
+      if (theme === "system") { document.documentElement.removeAttribute("data-theme"); localStorage.removeItem(key); }
+      else { document.documentElement.setAttribute("data-theme", theme); if (save) localStorage.setItem(key, theme); }
+      buttons.forEach(b => b.classList.toggle("active", b.dataset.theme === theme));
+    }
+
+    buttons.forEach(b => b.onclick = () => applyTheme(b.dataset.theme));
+    applyTheme(localStorage.getItem(key) || "system", false);
+  </script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LMS Theme Switcher</title>
+  <style>
+    :root {
+      --bg: #fff;
+      --text: #000;
+      --transition: 0.3s;
+    }
+    [data-theme="dark"] {
+      --bg: #111;
+      --text: #eee;
+    }
+    [data-theme="sepia"] {
+      --bg: #f4ecd8;
+      --text: #3b2f2b;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      transition: background var(--transition), color var(--transition);
+      font-family: sans-serif;
+      padding: 20px;
+    }
+    button {
+      margin: 5px;
+      padding: 8px 12px;
+      cursor: pointer;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+      background: #f8f8f8;
+      transition: background 0.2s, border 0.2s;
+    }
+    button.active {
+      background: #007bff;
+      color: #fff;
+      border-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>LMS Theme Switcher</h1>
+  <button data-theme="light">Light</button>
+  <button data-theme="dark">Dark</button>
+  <button data-theme="sepia">Sepia</button>
+  <button data-theme="system">System</button>
+
+  <script>
+    const buttons = document.querySelectorAll("button");
+    const key = "lms-theme";
+
+    // Apply theme and save it
+    function applyTheme(theme, save = true) {
+      if (theme === "system") {
+        document.documentElement.removeAttribute("data-theme");
+        if (save) localStorage.removeItem(key);
+      } else {
+        document.documentElement.setAttribute("data-theme", theme);
+        if (save) localStorage.setItem(key, theme);
+      }
+      updateActive(theme);
+    }
+
+    // Highlight the active button
+    function updateActive(theme) {
+      buttons.forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.theme === theme || (theme === "system" && btn.dataset.theme === "system"));
+      });
+    }
+
+    // Button clicks
+    buttons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const theme = btn.dataset.theme;
+        applyTheme(theme);
+      });
+    });
+
+    // Load saved theme on page load
+    const saved = localStorage.getItem(key);
+    applyTheme(saved || "system", false);
+  </script>
+</body>
+</html>
